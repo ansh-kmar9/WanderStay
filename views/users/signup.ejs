@@ -1,0 +1,134 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/signup.css">
+<div class="signup-container">
+  <div class="signup-card">
+    <!-- Brand Section -->
+    <div class="brand-section">
+      <i class="fa-solid fa-house-circle-check brand-icon"></i>
+      <h2>Create your account</h2>
+      <p class="subtitle">Join the WanderStay community</p>
+    </div>
+
+    <!-- Signup Form -->
+    <form action="/signup" method="post" class="needs-validation" novalidate>
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <i class="far fa-user"></i>
+          </span>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Choose a username"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please choose a username</div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <i class="far fa-envelope"></i>
+          </span>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter a valid email</div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <i class="far fa-lock"></i>
+          </span>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            class="form-control"
+            required
+          />
+          <button type="button" class="password-toggle" onclick="togglePassword()">
+            <i class="far fa-eye"></i>
+          </button>
+        </div>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please create a password</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary signup-btn">
+        Create Account
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>or sign up with</span>
+    </div>
+
+    <!-- Social Signup -->
+    <div class="social-signup">
+      <a href="/auth/google" class="google-btn">
+        <img src="https://cdn.cdnlogo.com/logos/g/35/google-icon.svg" alt="Google">
+        <span>Continue with Google</span>
+      </a>
+    </div>
+
+    <!-- Login Link -->
+    <div class="login-link">
+      Already have an account? <a href="/login">Log in</a>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function togglePassword() {
+  const passwordInput = document.getElementById('password');
+  const toggleBtn = document.querySelector('.password-toggle i');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleBtn.classList.remove('fa-eye');
+    toggleBtn.classList.add('fa-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    toggleBtn.classList.remove('fa-eye-slash');
+    toggleBtn.classList.add('fa-eye');
+  }
+}
+
+// Bootstrap form validation
+(function () {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>

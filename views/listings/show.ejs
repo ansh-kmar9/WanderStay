@@ -1,0 +1,241 @@
+<% layout('/layouts/boilerplate') %>
+
+<link rel="stylesheet" href="/css/show.css" />
+<!-- Listing Header -->
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <h2 class="listing-title mb-4"><%= listing.title %></h2>
+    </div>
+  </div>
+
+  <!-- Listing Card -->
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="listing-card shadow-sm">
+        <div class="listing-image-container">
+          <img
+            src="<%= listing.image.url %>"
+            class="listing-image"
+            alt="<%= listing.title %>"
+          />
+        </div>
+
+        <div class="listing-details p-4">
+          <div class="host-info mb-3">
+            <div class="host-header">
+              <span class="host-label">Hosted by</span>
+              <span class="host-name"><%= listing.owner.username %></span>
+            </div>
+            <div class="category-info">
+              <span class="category-label">Category</span>
+              <span class="category-type">
+                <i class="<%= getCategoryIcon(listing.category) %>"></i>
+                <%= listing.category %>
+              </span>
+            </div>
+          </div>
+
+          <div class="listing-info">
+            <p class="description mb-3"><%= listing.description %></p>
+            <div class="price-location">
+              <p class="price mb-2">
+                ₹<%= listing.price.toLocaleString("en-IN") %>
+                <span class="per-night">per night</span>
+              </p>
+              <p class="location mb-1">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= listing.location %>, <%= listing.country %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
+  <div class="row mt-4">
+    <div class="col-lg-8 offset-lg-2">
+      <div class="d-flex gap-3">
+        <a
+          href="/listings/<%= listing._id %>/edit"
+          class="btn btn-outline-dark"
+        >
+          <i class="fas fa-edit"></i> Edit
+        </a>
+        <form
+          method="post"
+          action="/listings/<%= listing._id %>?_method=DELETE"
+        >
+          <button class="btn btn-danger">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <% } else { %>
+  <!-- Reserve Button for Non-Owners -->
+  <div class="row mt-4">
+    <div class="col-lg-8 offset-lg-2">
+      <a href="/listings/<%= listing._id %>/reserve" class="btn btn-success">
+        <i class="fas fa-calendar-check"></i> Reserve
+      </a>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Reviews Section -->
+  <div class="row mt-5">
+    <div class="col-lg-8 offset-lg-2">
+      <% if(currUser) { %>
+      <div class="review-form-container mb-5">
+        <h4 class="mb-4">Leave a Review</h4>
+        <form
+          action="/listings/<%= listing._id %>/reviews"
+          method="post"
+          novalidate
+          class="needs-validation"
+        >
+          <!-- Star Rating -->
+          <div class="rating-container mb-4">
+            <label class="form-label">Rating</label>
+            <div class="star-rating">
+              <% for(let i = 5; i >= 1; i--) { %>
+              <input
+                type="radio"
+                id="star<%= i %>"
+                name="review[rating]"
+                value="<%= i %>"
+              />
+              <label for="star<%= i %>" class="star">★</label>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Comment Box -->
+          <div class="mb-4">
+            <label for="comment" class="form-label">Your Review</label>
+            <textarea
+              name="review[comment]"
+              id="comment"
+              class="form-control"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <button class="btn btn-dark">Submit Review</button>
+        </form>
+      </div>
+      <% } %>
+
+      <!-- Reviews List -->
+      <% if(listing.reviews.length > 0) { %>
+      <div class="reviews-section">
+        <h4 class="mb-4">Reviews</h4>
+        <div class="reviews-grid">
+          <% for(review of listing.reviews) { %>
+          <div class="review-card shadow-sm">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <h6 class="reviewer-name"><%= review.author.username %></h6>
+                <span class="review-date">
+                  <%= new Date(review.createdAt).toLocaleDateString("en-GB", {
+                  month: "short", year: "numeric" }) %>
+                </span>
+              </div>
+              <div class="rating-display">
+                <% for(let i = 1; i <= 5; i++) { %>
+                <span class="star <%= i <= review.rating ? 'filled' : '' %>"
+                  >★</span
+                >
+                <% } %>
+              </div>
+            </div>
+            <p class="review-comment"><%= review.comment %></p>
+
+            <% if(currUser && review.author.equals(currUser._id)) { %>
+            <div class="review-actions mt-3">
+              <form
+                action="/listings/<%= listing._id%>/reviews/<%= review._id%>?_method=DELETE"
+                method="post"
+              >
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div class="row mt-5 mb-5">
+    <div class="col-lg-8 offset-lg-2">
+      <h4 class="mb-4">Where you'll be</h4>
+      <div id="map" class="map-container"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+
+    const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+
+    function initMap() {
+      console.log("initMap called");
+
+      if (!coordinates || coordinates.length !== 2) {
+        console.error("Coordinates missing or invalid:", coordinates);
+        return;
+      }
+
+      const [lng, lat] = coordinates;
+
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 9,
+        center: { lat, lng },
+      });
+
+      const marker = new google.maps.Marker({
+    position: { lat, lng },
+    map: map,
+    icon: {
+      url: "https://imgs.search.brave.com/JRud_CctCWh4dFgyIJ-f3JAoX5GbtrlhVhkjxzOusJo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4t/aWNvbnMtcG5nLmZs/YXRpY29uLmNvbS8x/MjgvOTUwMi85NTAy/NTE4LnBuZw",
+      scaledSize: new google.maps.Size(40, 40),
+    },
+    title: <%- JSON.stringify(listing.location) %>
+  });
+
+  // Create the info window with your popup content
+  const infoWindow = new google.maps.InfoWindow({
+    content: `<div><strong>${<%- JSON.stringify(listing.title) %>} <br> <p>Excat location wiil be provdide after booking </p>Welcome to WanderStay </strong></div>`
+  });
+
+  // Show popup on mouseover
+  marker.addListener('mouseover', () => {
+    infoWindow.open(map, marker);
+  });
+
+  // Hide popup on mouseout
+  marker.addListener('mouseout', () => {
+    infoWindow.close();
+  });
+
+
+    }
+</script>
+
+<script
+  async
+  defer
+  src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.MAP_API_KEY %>&callback=initMap"
+></script>

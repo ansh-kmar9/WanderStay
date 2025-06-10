@@ -1,0 +1,224 @@
+<% layout('/layouts/boilerplate') %>
+
+<link rel="stylesheet" href="/css/reserve.css" />
+
+<div class="reserve-container">
+  <!-- Listing Overview -->
+  <div class="listing-overview">
+    <div class="overview-header">
+      <h1><%= listing.title %></h1>
+      <p class="location">
+        <i class="fas fa-map-marker-alt"></i>
+        <%= listing.location %>, <%= listing.country %>
+      </p>
+    </div>
+
+    <div class="listing-gallery">
+      <img
+        src="<%= listing.image.url %>"
+        alt="<%= listing.title %>"
+        class="main-image"
+      />
+    </div>
+  </div>
+
+  <!-- Booking Section -->
+  <div class="booking-section">
+    <div class="booking-container">
+      <div class="booking-details">
+        <div class="price-info">
+          <span class="price"
+            >₹<%= listing.price.toLocaleString("en-IN") %></span
+          >
+          <span class="per-night">per night</span>
+        </div>
+
+        <% if (listing.reviews && listing.reviews.length > 0) { %>
+        <div class="rating">
+          <i class="fas fa-star"></i>
+          <% const avgRating = (listing.reviews.reduce((sum, review) => sum +
+          review.rating, 0) / listing.reviews.length).toFixed(1) %> <%=
+          avgRating %> · <%= listing.reviews.length %> reviews
+        </div>
+        <% } %>
+      </div>
+
+      <form id="bookingForm" class="booking-form">
+        <!-- Date Selection -->
+        <div class="date-inputs">
+          <div class="input-group">
+            <label>Check-in</label>
+            <input
+              type="date"
+              id="checkIn"
+              required
+              min="<%= new Date().toISOString().split('T')[0] %>"
+            />
+          </div>
+          <div class="input-group">
+            <label>Check-out</label>
+            <input type="date" id="checkOut" required />
+          </div>
+        </div>
+
+        <!-- Guests -->
+        <div class="input-group">
+          <label>Guests</label>
+          <select id="guests" required>
+            <option value="1">1 guest</option>
+            <option value="2">2 guests</option>
+            <option value="3">3 guests</option>
+            <option value="4">4 guests</option>
+            <option value="5">5 guests</option>
+          </select>
+        </div>
+
+        <!-- Price Breakdown -->
+        <div class="price-breakdown">
+          <div class="breakdown-item">
+            <span
+              >₹<%= listing.price.toLocaleString("en-IN") %> ×
+              <span id="nightCount">0</span> nights</span
+            >
+            <span id="subtotal">₹0</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Service fee</span>
+            <span id="serviceFee">₹0</span>
+          </div>
+          <div class="breakdown-total">
+            <span>Total</span>
+            <span id="total">₹0</span>
+          </div>
+        </div>
+
+        <button type="submit" class="reserve-btn">Reserve</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Listing Details -->
+<div class="listing-details">
+  <div class="details-section">
+    <h2>About this place</h2>
+    <p><%= listing.description %></p>
+  </div>
+
+  <div class="details-section">
+    <h2>What this place offers</h2>
+    <div class="amenities-grid">
+      <div class="amenity-item">
+        <i class="fas fa-wifi"></i>
+        <span>Wifi</span>
+      </div>
+      <div class="amenity-item">
+        <i class="fas fa-parking"></i>
+        <span>Free parking</span>
+      </div>
+      <div class="amenity-item">
+        <i class="fas fa-swimming-pool"></i>
+        <span>Pool</span>
+      </div>
+      <div class="amenity-item">
+        <i class="fas fa-tv"></i>
+        <span>TV</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Success Modal -->
+<div id="bookingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <i class="fas fa-check-circle"></i>
+      <h2>Booking Confirmed!</h2>
+    </div>
+    <div class="modal-body">
+      <p>
+        Your reservation has been confirmed. Check your email for booking
+        details.
+      </p>
+      <div class="booking-summary">
+        <div class="summary-item">
+          <i class="fas fa-calendar"></i>
+          <span id="modalDates"></span>
+        </div>
+        <div class="summary-item">
+          <i class="fas fa-user"></i>
+          <span id="modalGuests"></span>
+        </div>
+        <div class="summary-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span><%= listing.location %></span>
+        </div>
+      </div>
+    </div>
+    <button class="modal-close">Close</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    const modal = document.getElementById('bookingModal');
+    const closeBtn = document.querySelector('.modal-close');
+    const checkIn = document.getElementById('checkIn');
+    const checkOut = document.getElementById('checkOut');
+    const guests = document.getElementById('guests');
+
+    // Calculate prices
+    function updatePrices() {
+      const startDate = new Date(checkIn.value);
+      const endDate = new Date(checkOut.value);
+
+      if (startDate && endDate && endDate > startDate) {
+        const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const pricePerNight = <%= listing.price %>;
+        const subtotal = nights * pricePerNight;
+        const serviceFee = Math.round(subtotal * 0.12);
+        const total = subtotal + serviceFee;
+
+        document.getElementById('nightCount').textContent = nights;
+        document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString("en-IN")}`;
+        document.getElementById('serviceFee').textContent = `₹${serviceFee.toLocaleString("en-IN")}`;
+        document.getElementById('total').textContent = `₹${total.toLocaleString("en-IN")}`;
+      }
+    }
+
+    // Set min date for checkout based on checkin
+    checkIn.addEventListener('change', function() {
+      checkOut.min = this.value;
+      updatePrices();
+    });
+
+    checkOut.addEventListener('change', updatePrices);
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Update modal content
+      document.getElementById('modalDates').textContent =
+        `${checkIn.value} to ${checkOut.value}`;
+      document.getElementById('modalGuests').textContent =
+        `${guests.value} guest${guests.value > 1 ? 's' : ''}`;
+
+      // Show modal
+      modal.style.display = 'flex';
+    });
+
+    // Close modal
+    closeBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  });
+</script>

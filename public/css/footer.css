@@ -1,0 +1,256 @@
+.aesthetic-footer {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  padding: 80px 0 40px;
+  margin-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle background pattern */
+.aesthetic-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 25px 25px,
+      #f6f6f6 2%,
+      transparent 0%
+    ),
+    radial-gradient(circle at 75px 75px, #f6f6f6 2%, transparent 0%);
+  background-size: 100px 100px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+
+/* Brand Section */
+.footer-brand {
+  padding-right: 40px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.brand-logo i {
+  font-size: 24px;
+  color: #ff385c;
+  transform: translateY(-2px);
+}
+
+.brand-logo span {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(120deg, #ff385c, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.brand-tagline {
+  color: #6b7280;
+  font-size: 15px;
+  margin-bottom: 24px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+/* Social Links */
+.social-links {
+  display: flex;
+  gap: 16px;
+}
+
+.social-link {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.social-link:hover {
+  transform: translateY(-3px);
+  color: #ff385c;
+  box-shadow: 0 4px 12px rgba(255, 56, 92, 0.15);
+  border-color: #ffe4e8;
+}
+
+/* Navigation Section */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+.footer-nav-group h6 {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.footer-nav-group a {
+  display: block;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 15px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  width: fit-content;
+}
+
+.footer-nav-group a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #ff385c;
+  transition: width 0.2s ease;
+}
+
+.footer-nav-group a:hover {
+  color: #ff385c;
+}
+
+.footer-nav-group a:hover::after {
+  width: 100%;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  padding-top: 32px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+.footer-bottom .fa-heart {
+  color: #ff385c;
+  margin: 0 4px;
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.legal-links a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legal-links a:hover {
+  color: #ff385c;
+}
+
+.separator {
+  color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-brand {
+    padding-right: 0;
+    text-align: center;
+  }
+
+  .brand-logo {
+    justify-content: center;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .footer-nav {
+    text-align: center;
+  }
+
+  .footer-nav-group a {
+    margin: 0 auto 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .aesthetic-footer {
+    padding: 60px 0 32px;
+  }
+
+  .footer-nav {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .legal-links {
+    justify-content: center;
+  }
+}
+
+/* Animation for heart icon */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.footer-bottom .fa-heart {
+  animation: heartbeat 1s infinite;
+}

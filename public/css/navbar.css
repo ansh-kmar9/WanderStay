@@ -1,0 +1,259 @@
+/* Navbar */
+
+/* Navbar Styles */
+.custom-navbar {
+  height: 5rem;
+  background-color: white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 1020;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #333 !important;
+  text-decoration: none;
+}
+
+.brand-text {
+  color: #333;
+}
+
+/* Mobile Top Section */
+.mobile-top-section {
+  padding: 0.5rem 0;
+}
+
+.mobile-brand {
+  font-size: 1.25rem;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Search Container */
+.search-container {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 2rem;
+}
+
+.mobile-search-container {
+  flex: 1;
+  margin-left: 1rem;
+  max-width: none;
+}
+
+/* Search Bar Styles */
+.search-bar {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  border-radius: 25px;
+  padding: 12px 50px 12px 20px;
+  border: 2px solid #e0e0e0;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #ff4268;
+  box-shadow: 0 0 0 0.1rem rgba(255, 66, 104, 0.25);
+  outline: none;
+}
+
+/* Mobile Search Input */
+.mobile-search-input {
+  padding: 8px 40px 8px 15px;
+  font-size: 13px;
+  height: 36px;
+}
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ff4268;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-search-btn {
+  width: 28px;
+  height: 28px;
+  right: 4px;
+}
+
+.search-btn:hover {
+  background: #e63946;
+}
+
+/* Navigation Buttons */
+.add-new-btn {
+  color: #333 !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.add-new-btn:hover {
+  color: #ff4268 !important;
+}
+
+.user-btn {
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  padding: 8px 12px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.user-btn:hover {
+  border-color: #ff4268;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Bottom Navigation for Mobile */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 0;
+  max-width: 100%;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #666;
+  transition: color 0.3s ease;
+  min-width: 60px;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+  color: #ff4268;
+  text-decoration: none;
+}
+
+.bottom-nav-item i {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.bottom-nav-item span {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Mobile Spacer */
+.mobile-spacer {
+  height: 80px;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #ff4268;
+  border-color: #ff4268;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: #e63946;
+  border-color: #e63946;
+}
+
+.btn-outline-primary {
+  color: #ff4268;
+  border-color: #ff4268;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #ff4268;
+  border-color: #ff4268;
+}
+
+/* Dropdown Styles */
+.dropdown-menu {
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #ff4268;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .custom-navbar {
+    height: 4rem;
+    padding: 0.5rem 1rem;
+  }
+
+  body {
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 576px) {
+  .bottom-nav-item span {
+    font-size: 0.7rem;
+  }
+
+  .bottom-nav-item {
+    min-width: 50px;
+    padding: 6px 8px;
+  }
+
+  .mobile-search-input {
+    font-size: 12px;
+  }
+
+  .custom-navbar {
+    height: 3.5rem;
+  }
+
+  .mobile-brand {
+    font-size: 1.1rem;
+  }
+}
+
+/* Active page highlighting for bottom nav */
+.bottom-nav-item.active {
+  color: #ff4268;
+}

@@ -1,0 +1,130 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/category.css" />
+
+<!-- Category Header -->
+<div class="category-header">
+  <div class="category-content">
+    <h1><%= category %> Stays</h1>
+    <p><%= listings.length %> places to stay</p>
+  </div>
+</div>
+
+<!-- Filters Section -->
+<div class="filters-section">
+  <div class="filters-wrapper">
+    <div class="filters-group">
+      <button class="filter-btn active">
+        <i class="fas fa-sort"></i>
+        Recommended
+      </button>
+      <button class="filter-btn">
+        <i class="fas fa-arrow-down"></i>
+        Price: Low to High
+      </button>
+      <button class="filter-btn">
+        <i class="fas fa-arrow-up"></i>
+        Price: High to Low
+      </button>
+      <button class="filter-btn">
+        <i class="fas fa-star"></i>
+        Top Rated
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="listings-container">
+  <div class="listings-grid">
+    <% for (let listing of listings) { %>
+    <a href="/listings/<%= listing._id %>" class="listing-card-link">
+      <div class="listing-card">
+        <div class="listing-image-container">
+          <img
+            src="<%= listing.image.url %>"
+            alt="<%= listing.title %>"
+            class="rounded-image"
+          />
+          <button class="wishlist-btn">
+            <i class="far fa-heart"></i>
+          </button>
+
+          <% if (listing.reviews && listing.reviews.length > 0) { %> <% const
+          totalRating = listing.reviews.reduce((sum, review) => sum +
+          review.rating, 0); const avgRating = (totalRating /
+          listing.reviews.length).toFixed(1); %>
+          <div class="rating-badge">
+            <i class="fas fa-star"></i>
+            <%= avgRating %>
+          </div>
+          <% } else { %>
+          <div class="new-badge">New</div>
+          <% } %>
+        </div>
+
+        <div class="listing-details">
+          <div class="listing-info">
+            <h3 class="listing-title"><%= listing.title %></h3>
+            <div class="listing-meta">
+              <span class="listing-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= listing.location %>
+              </span>
+              <span>
+                <i class="fa-solid fa-table"></i> &nbsp; <%= listing.category
+                %></span
+              >
+              <span class="review-count">
+                <% if (listing.reviews && listing.reviews.length > 0) { %> <%=
+                listing.reviews.length %> reviews <% } %>
+              </span>
+            </div>
+          </div>
+          <div class="listing-price">
+            <span class="price"
+              >₹<%= listing.price.toLocaleString("en-IN") %></span
+            >
+            <span class="per-night">per night</span>
+          </div>
+        </div>
+      </div>
+    </a>
+    <% } %>
+  </div>
+
+  <!-- Empty State -->
+  <% if (listings.length === 0) { %>
+  <div class="empty-state">
+    <i class="fas fa-search"></i>
+    <h3>No <%= category.toLowerCase() %> stays found</h3>
+    <p>Try exploring other categories or check back later</p>
+    <a href="/listings" class="back-btn">View All Stays</a>
+  </div>
+  <% } %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Filter buttons
+    const filterBtns = document.querySelectorAll(".filter-btn");
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        filterBtns.forEach((b) => b.classList.remove("active"));
+        this.classList.add("active");
+      });
+    });
+
+    // Wishlist buttons
+    const wishlistBtns = document.querySelectorAll(".wishlist-btn");
+    wishlistBtns.forEach((btn) => {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const icon = this.querySelector("i");
+        icon.classList.toggle("far");
+        icon.classList.toggle("fas");
+        icon.classList.toggle("text-danger");
+      });
+    });
+  });
+</script>

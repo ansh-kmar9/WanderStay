@@ -1,0 +1,133 @@
+<!-- Flash Messages Container -->
+
+<link rel="stylesheet" href="/css/flash.css" />
+<div class="flash-messages-container">
+  <% if(success && success.length){ %>
+  <div class="flash-message flash-success" role="alert" data-auto-close="5000">
+    <div class="flash-content">
+      <div class="flash-icon">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div class="flash-text">
+        <div class="flash-title">Success!</div>
+        <div class="flash-description"><%= success %></div>
+      </div>
+      <button type="button" class="flash-close" aria-label="Close">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="flash-progress"></div>
+  </div>
+  <% } %> <% if(error && error.length){ %>
+  <div class="flash-message flash-error" role="alert" data-auto-close="5000">
+    <div class="flash-content">
+      <div class="flash-icon">
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </div>
+      <div class="flash-text">
+        <div class="flash-title">Error!</div>
+        <div class="flash-description"><%= error %></div>
+      </div>
+      <button type="button" class="flash-close" aria-label="Close">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="flash-progress"></div>
+  </div>
+  <% } %>
+</div>
+
+<script>
+  // Flash Messages JavaScript
+  document.addEventListener("DOMContentLoaded", function () {
+    initFlashMessages();
+  });
+
+  function initFlashMessages() {
+    const flashMessages = document.querySelectorAll(".flash-message");
+
+    flashMessages.forEach((message) => {
+      const autoCloseTime = 5000; // 5 seconds
+      let timeoutId;
+      let isPaused = false;
+      let startTime = Date.now();
+      let remainingTime = autoCloseTime;
+
+      // Start auto-close timer
+      function startAutoClose() {
+        startTime = Date.now();
+        timeoutId = setTimeout(() => {
+          if (!isPaused) {
+            closeFlashMessage(message);
+          }
+        }, remainingTime);
+      }
+
+      // Pause auto-close on hover
+      function pauseAutoClose() {
+        if (!isPaused) {
+          isPaused = true;
+          clearTimeout(timeoutId);
+          remainingTime -= Date.now() - startTime;
+
+          // Pause progress bar animation
+          const progressBar = message.querySelector(".flash-progress");
+          if (progressBar) {
+            progressBar.style.animationPlayState = "paused";
+          }
+        }
+      }
+
+      // Resume auto-close on mouse leave
+      function resumeAutoClose() {
+        if (isPaused) {
+          isPaused = false;
+
+          // Resume progress bar animation
+          const progressBar = message.querySelector(".flash-progress");
+          if (progressBar) {
+            progressBar.style.animationPlayState = "running";
+          }
+
+          // Restart timer with remaining time
+          startAutoClose();
+        }
+      }
+
+      // Close button functionality
+      const closeBtn = message.querySelector(".flash-close");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          clearTimeout(timeoutId);
+          closeFlashMessage(message);
+        });
+      }
+
+      // Hover events
+      message.addEventListener("mouseenter", pauseAutoClose);
+      message.addEventListener("mouseleave", resumeAutoClose);
+
+      // Keyboard accessibility
+      message.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          clearTimeout(timeoutId);
+          closeFlashMessage(message);
+        }
+      });
+
+      // Start the auto-close timer
+      startAutoClose();
+    });
+  }
+
+  function closeFlashMessage(message) {
+    message.classList.add("flash-closing");
+
+    // Remove the element after animation completes
+    setTimeout(() => {
+      if (message.parentNode) {
+        message.parentNode.removeChild(message);
+      }
+    }, 300);
+  }
+</script>
