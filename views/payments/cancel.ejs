@@ -1,0 +1,75 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/css/cancel.css" />
+
+<div class="cancel-container">
+  <div class="cancel-card">
+    <!-- Cancel Header -->
+    <div class="cancel-header">
+      <div class="cancel-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <h1>Payment Cancelled</h1>
+      <p>Your booking request has been cancelled</p>
+    </div>
+
+    <!-- Property Details -->
+    <div class="property-details">
+      <div class="property-preview">
+        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" />
+        <div class="property-info">
+          <h3><%= listing.title %></h3>
+          <p class="location">
+            <i class="fas fa-map-marker-alt"></i>
+            <%= listing.location %>, <%= listing.country %>
+          </p>
+          <p class="category">
+            <i class="fas fa-tag"></i>
+            <%= listing.category %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel Message -->
+    <div class="cancel-message">
+      <div class="message-box">
+        <i class="fas fa-info-circle"></i>
+        <div class="message-content">
+          <h4>What happens next?</h4>
+          <ul>
+            <li>No charges have been made to your account</li>
+            <li>You can try booking again at any time</li>
+            <li>The property is still available for your selected dates</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="/listings" class="btn-secondary">
+        <i class="fas fa-home"></i>
+        Back to Home
+      </a>
+      <a href="/listings/<%= listing._id %>/reserve" class="btn-primary">
+        <i class="fas fa-redo"></i>
+        Try Again
+      </a>
+    </div>
+
+    <!-- Help Section -->
+    <div class="help-section">
+      <p>Need help? <a href="/contact">Contact our support team</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add any interactive functionality here
+    const helpLink = document.querySelector(".help-section a");
+    helpLink.addEventListener("click", function (e) {
+      // Optional: Add custom handling for help link
+    });
+  });
+</script>

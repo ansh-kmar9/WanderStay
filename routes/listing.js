@@ -57,6 +57,25 @@ router.get(
   wrapAsync(listingController.renderReserve)
 );
 
+// POST /listings/:id/create-checkout-session
+router.post(
+  "/:id/create-checkout-session",
+  isLoggedIn,
+  wrapAsync(listingController.handlePayment)
+);
 
+// --- payment success route
+router.get(
+  "/:id/reserve/success",
+  isLoggedIn,
+  wrapAsync(listingController.renderSuccessPaymentPage)
+);
+
+// --- payment cancel route
+router.get(
+  "/:id/reserve/cancel",
+  isLoggedIn,
+  wrapAsync(listingController.renderCancelPaymentPage)
+);
 
 module.exports = router;

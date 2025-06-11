@@ -92,7 +92,9 @@
           </div>
         </div>
 
-        <button type="submit" class="reserve-btn">Reserve</button>
+        <form id="bookingForm">
+          <button type="submit" class="btn btn-primary">Reserve</button>
+        </form>
       </form>
     </div>
   </div>
@@ -126,100 +128,70 @@
       </div>
     </div>
   </div>
-  
 </div>
-
 
 <!-- Reviews Section -->
 <div class="details-section reviews-section">
   <div class="reviews-header">
     <h2>Reviews</h2>
     <% if (listing.reviews && listing.reviews.length > 0) { %>
-      <div class="rating-summary">
-        <i class="fas fa-star"></i>
-        <% const avgRating = (listing.reviews.reduce((sum, review) => sum + review.rating, 0) / listing.reviews.length).toFixed(1) %>
-        <span><%= avgRating %></span>
-        <span class="bullet">•</span>
-        <span><%= listing.reviews.length %> reviews</span>
-      </div>
+    <div class="rating-summary">
+      <i class="fas fa-star"></i>
+      <% const avgRating = (listing.reviews.reduce((sum, review) => sum +
+      review.rating, 0) / listing.reviews.length).toFixed(1) %>
+      <span><%= avgRating %></span>
+      <span class="bullet">•</span>
+      <span><%= listing.reviews.length %> reviews</span>
+    </div>
     <% } %>
   </div>
 
   <% if(listing.reviews.length > 0) { %>
-    <div class="reviews-grid">
-      <% for(review of listing.reviews) { %>
-        <div class="review-card">
-          <div class="review-header">
-            <div class="reviewer-info">
-              <div class="reviewer-name">
-                <i class="fas fa-user-circle"></i>
-                <%= review.author.username %>
-              </div>
-              <div class="review-date">
-                <%= new Date(review.createdAt).toLocaleDateString("en-GB", {
-                  month: "short",
-                  year: "numeric"
-                }) %>
-              </div>
-            </div>
-            <div class="rating-display">
-              <% for(let i = 1; i <= 5; i++) { %>
-                <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
-              <% } %>
-            </div>
+  <div class="reviews-grid">
+    <% for(review of listing.reviews) { %>
+    <div class="review-card">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <div class="reviewer-name">
+            <i class="fas fa-user-circle"></i>
+            <%= review.author.username %>
           </div>
-          <p class="review-comment"><%= review.comment %></p>
-          
+          <div class="review-date">
+            <%= new Date(review.createdAt).toLocaleDateString("en-GB", { month:
+            "short", year: "numeric" }) %>
+          </div>
         </div>
-      <% } %>
+        <div class="rating-display">
+          <% for(let i = 1; i <= 5; i++) { %>
+          <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
+          <% } %>
+        </div>
+      </div>
+      <p class="review-comment"><%= review.comment %></p>
     </div>
+    <% } %>
+  </div>
   <% } else { %>
-    <p class="no-reviews">No reviews yet</p>
+  <p class="no-reviews">No reviews yet</p>
   <% } %>
 </div>
 
 
-<!-- Booking Success Modal -->
-<div id="bookingModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <i class="fas fa-check-circle"></i>
-      <h2>Booking Confirmed!</h2>
-    </div>
-    <div class="modal-body">
-      <p>
-        Your reservation has been confirmed. Check your email for booking
-        details.
-      </p>
-      <div class="booking-summary">
-        <div class="summary-item">
-          <i class="fas fa-calendar"></i>
-          <span id="modalDates"></span>
-        </div>
-        <div class="summary-item">
-          <i class="fas fa-user"></i>
-          <span id="modalGuests"></span>
-        </div>
-        <div class="summary-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span><%= listing.location %></span>
-        </div>
-      </div>
-    </div>
-    <button class="modal-close">Close</button>
-  </div>
-</div>
 
+<script src="https://js.stripe.com/v3/"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('bookingForm');
-    const modal = document.getElementById('bookingModal');
-    const closeBtn = document.querySelector('.modal-close');
-    const checkIn = document.getElementById('checkIn');
-    const checkOut = document.getElementById('checkOut');
-    const guests = document.getElementById('guests');
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("bookingForm");
+    const checkIn = document.getElementById("checkIn");
+    const checkOut = document.getElementById("checkOut");
+    const guests = document.getElementById("guests");
+    const nightCount = document.getElementById("nightCount");
+    const subtotalElem = document.getElementById("subtotal");
+    const serviceFeeElem = document.getElementById("serviceFee");
+    const totalElem = document.getElementById("total");
 
-    // Calculate prices
+    let finalAmount = 0;
+
     function updatePrices() {
       const startDate = new Date(checkIn.value);
       const endDate = new Date(checkOut.value);
@@ -231,44 +203,64 @@
         const serviceFee = Math.round(subtotal * 0.12);
         const total = subtotal + serviceFee;
 
-        document.getElementById('nightCount').textContent = nights;
-        document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString("en-IN")}`;
-        document.getElementById('serviceFee').textContent = `₹${serviceFee.toLocaleString("en-IN")}`;
-        document.getElementById('total').textContent = `₹${total.toLocaleString("en-IN")}`;
+        nightCount.textContent = nights;
+        subtotalElem.textContent = `₹${subtotal.toLocaleString("en-IN")}`;
+        serviceFeeElem.textContent = `₹${serviceFee.toLocaleString("en-IN")}`;
+        totalElem.textContent = `₹${total.toLocaleString("en-IN")}`;
+
+        finalAmount = total;
+      } else {
+        nightCount.textContent = "0";
+        subtotalElem.textContent = "₹0";
+        serviceFeeElem.textContent = "₹0";
+        totalElem.textContent = "₹0";
+        finalAmount = 0;
       }
     }
 
-    // Set min date for checkout based on checkin
-    checkIn.addEventListener('change', function() {
-      checkOut.min = this.value;
+    checkIn.addEventListener("change", () => {
+      checkOut.min = checkIn.value;
       updatePrices();
     });
 
-    checkOut.addEventListener('change', updatePrices);
+    checkOut.addEventListener("change", updatePrices);
+    guests.addEventListener("input", updatePrices);
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      // Update modal content
-      document.getElementById('modalDates').textContent =
-        `${checkIn.value} to ${checkOut.value}`;
-      document.getElementById('modalGuests').textContent =
-        `${guests.value} guest${guests.value > 1 ? 's' : ''}`;
+      const stripe = Stripe("<%= process.env.STRIPE_PUBLISHABLE_KEY %>");
 
-      // Show modal
-      modal.style.display = 'flex';
-    });
+      try {
+        const response = await fetch("/listings/<%= listing._id %>/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            amount: finalAmount,
+            checkIn: checkIn.value,
+            checkOut: checkOut.value,
+            guests: guests.value
+          })
+        });
 
-    // Close modal
-    closeBtn.addEventListener('click', function() {
-      modal.style.display = 'none';
-    });
+        if (!response.ok) {
+          throw new Error("Server error while creating session.");
+        }
 
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-      if (e.target === modal) {
-        modal.style.display = 'none';
+        const session = await response.json();
+
+        const result = await stripe.redirectToCheckout({
+          sessionId: session.id
+        });
+
+        if (result.error) {
+          alert(result.error.message);
+        }
+      } catch (err) {
+        console.error("Checkout error:", err);
+        alert("Something went wrong. Please try again.");
       }
     });
   });

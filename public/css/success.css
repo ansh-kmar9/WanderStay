@@ -1,0 +1,273 @@
+:root {
+  --primary: #ff385c;
+  --primary-dark: #e31c5f;
+  --text-dark: #222;
+  --text-light: #717171;
+  --bg-light: #f7f7f7;
+  --border: #e5e7eb;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --success: #34d399;
+}
+
+.success-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(to bottom, #fff5f6, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 800px;
+  padding: 40px;
+}
+
+/* Success Header */
+.success-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: var(--success);
+  margin-bottom: 20px;
+  animation: scaleUp 0.5s ease;
+}
+
+.success-header h1 {
+  font-size: 2rem;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.success-header p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+/* Property Preview */
+.property-preview {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg-light);
+  border-radius: 16px;
+  margin-bottom: 32px;
+}
+
+.property-preview img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.property-info h3 {
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-light);
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+/* Payment Summary */
+.payment-summary {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.payment-summary h4 {
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-light);
+}
+
+.summary-item.total {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 12px;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+/* Confirmation Info */
+.confirmation-info {
+  background: #f0fdf4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.confirmation-info p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #166534;
+  margin-bottom: 8px;
+}
+
+.confirmation-info p:last-child {
+  margin-bottom: 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--text-dark);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-light);
+}
+
+/* Animations */
+@keyframes scaleUp {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .success-card {
+    padding: 24px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .property-preview {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .property-preview img {
+    width: 100%;
+    height: 200px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .success-header {
+    margin-bottom: 24px;
+  }
+
+  .success-icon {
+    font-size: 48px;
+  }
+
+  .success-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .payment-summary {
+    padding: 16px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .success-container {
+    padding: 0;
+    background: white;
+  }
+
+  .success-card {
+    box-shadow: none;
+    max-width: 100%;
+  }
+
+  .action-buttons {
+    display: none;
+  }
+}

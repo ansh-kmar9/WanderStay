@@ -1,0 +1,106 @@
+<% layout('/layouts/boilerplate') %>
+
+<link rel="stylesheet" href="/css/success.css" />
+
+<div class="success-container">
+  <div class="success-card">
+    <!-- Success Header -->
+    <div class="success-header">
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h1>Payment Successful!</h1>
+      <p>Your booking has been confirmed</p>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="booking-details">
+      <div class="property-preview">
+        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" />
+        <div class="property-info">
+          <h3><%= listing.title %></h3>
+          <p class="location">
+            <i class="fas fa-map-marker-alt"></i>
+            <%= listing.location %>, <%= listing.country %>
+          </p>
+        </div>
+      </div>
+
+      <!-- Stay Details -->
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Check-in</span>
+          <span class="detail-value" id="checkInDate"> <%= checkIn %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Check-out</span>
+          <span class="detail-value" id="checkOutDate"><%= checkOut %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Guests <%= guests %></span>
+          <span class="detail-value" id="guestCount"> </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Category</span>
+          <span class="detail-value"><%= listing.category %></span>
+        </div>
+      </div>
+
+      <!-- Payment Summary -->
+      <div class="payment-summary">
+        <h4>Payment Summary</h4>
+        <div class="summary-items">
+          <% const serviceFee = Math.round(amount * 0.12); const roomCharges =
+          amount - serviceFee; %>
+
+          <div class="summary-item">
+            <span>Room charges</span>
+            <span>₹<%= roomCharges.toLocaleString("en-IN") %></span>
+          </div>
+          <div class="summary-item">
+            <span>Service fee</span>
+            <span>₹<%= serviceFee.toLocaleString("en-IN") %></span>
+          </div>
+          <div class="summary-item total">
+            <span>Total Paid</span>
+            <span>₹<%= amount.toLocaleString("en-IN") %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Details -->
+      <div class="confirmation-info">
+        <p>
+          <i class="fas fa-envelope"></i>
+          Booking confirmation has been sent to your email
+        </p>
+        <p>
+          <i class="fas fa-info-circle"></i>
+          Your booking ID: <strong id="bookingId"></strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a href="/listings" class="btn-secondary">
+        <i class="fas fa-home"></i>
+        Back to Home
+      </a>
+      <button class="btn-primary" onclick="window.print()">
+        <i class="fas fa-download"></i>
+        Download Receipt
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("bookingId").textContent = generateBookingId();
+  });
+
+  function generateBookingId() {
+    return "BK" + Date.now().toString().slice(-8);
+  }
+</script>

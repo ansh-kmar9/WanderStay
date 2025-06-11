@@ -1,5 +1,6 @@
 const Listing = require("../models/listing");
 const geocodeLocation = require("../utils/geocode");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({})
@@ -14,7 +15,8 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.showListing = async (req, res, next) => {
   let { id } = req.params;
-  const listing = await Listing.findById(id).populate({ path: "reviews", populate: { path: "author" } })
+  const listing = await Listing.findById(id)
+    .populate({ path: "reviews", populate: { path: "author" } })
     .populate("owner");
 
   function getCategoryIcon(category) {
@@ -110,7 +112,10 @@ module.exports.renderReserve = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  res.render("listings/reserve", { listing });
+  res.render("listings/reserve", {
+    listing,
+    stripePublicKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
 };
 
 module.exports.updateListing = async (req, res) => {
@@ -126,6 +131,83 @@ module.exports.updateListing = async (req, res) => {
   await listing.save();
   req.flash("success", "Listing Updated!");
   res.redirect(`/listings/${id}`);
+};
+
+module.exports.handlePayment = async (req, res) => {
+  const listingId = req.params.id;
+  const listing = await Listing.findById(listingId);
+  const { amount, checkIn, checkOut, guests } = req.body;
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card", "link"],
+    mode: "payment",
+    client_reference_id: `${listingId}:${amount}:${checkIn}:${checkOut}:${guests}`,
+    line_items: [
+      {
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: listing.title,
+            description: `Stay at ${listing.title} in ${listing.location}`,
+            images: [listing.image.url],
+          },
+          unit_amount: amount * 100,
+        },
+        quantity: 1,
+      },
+    ],
+    success_url: `${req.protocol}://${req.get(
+      "host"
+    )}/listings/${listingId}/reserve/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${req.protocol}://${req.get(
+      "host"
+    )}/listings/${listingId}/reserve/cancel`,
+  });
+
+  res.json({ id: session.id });
+};
+
+module.exports.renderSuccessPaymentPage = async (req, res) => {
+  const sessionId = req.query.session_id;
+
+  if (!sessionId) {
+    req.flash("error", "Session ID not provided");
+    return res.redirect("/listings");
+  }
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const [listingId, amount, checkIn, checkOut, guests] =
+    session.client_reference_id.split(":");
+
+  const listing = await Listing.findById(listingId);
+  if (!listing) {
+    req.flash("error", "Listing not found");
+    return res.redirect("/listings");
+  }
+  req.flash(
+    "success",
+    "Congratulations! Your room has been booked successfully."
+  );
+  res.render("payments/success", {
+    listing,
+    amount,
+    checkIn,
+    checkOut,
+    guests,
+  });
+};
+
+module.exports.renderCancelPaymentPage = async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    req.flash("error", "Listing not found");
+    return res.redirect("/listings");
+  }
+  req.flash(
+    "error",
+    "Booking was cancelled. Please try again or select another room."
+  );
+  res.render("payments/cancel", { listing });
 };
 
 module.exports.destroyListing = async (req, res) => {
