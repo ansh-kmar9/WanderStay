@@ -2,7 +2,9 @@ const Listing = require("../models/listing");
 const geocodeLocation = require("../utils/geocode");
 
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
+  const allListings = await Listing.find({})
+    .populate({ path: "reviews", populate: { path: "author" } })
+    .populate("owner");
   res.render("listings/index", { allListings });
 };
 
@@ -12,9 +14,7 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.showListing = async (req, res, next) => {
   let { id } = req.params;
-  const listing = await Listing.findById(id)
-    .populate({ path: "reviews", populate: { path: "author" } })
-    .populate("owner");
+  const listing = await Listing.findById(id).populate("reviews");
 
   function getCategoryIcon(category) {
     const icons = {
@@ -101,7 +101,9 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.renderReserve = async (req, res) => {
   let { id } = req.params;
-  const listing = await Listing.findById(id);
+  const listing = await Listing.findById(id)
+    .populate({ path: "reviews", populate: { path: "author" } })
+    .populate("owner");
   if (!listing) {
     req.flash("error", "Listing you requested for does not exists!");
     return res.redirect("/listings");

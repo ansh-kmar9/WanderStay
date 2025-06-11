@@ -22,6 +22,7 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const { error } = require("console");
 
+
 // const MONGO_URL = "mongodb://127.0.0.1:27017/wanderstay";
 const DB_URL = process.env.ATLASDB_URL;
 const secret_key = process.env.SECRET_KEY;
@@ -43,6 +44,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
+
+
 
 const store = MongoStore.create({
   mongoUrl: DB_URL,

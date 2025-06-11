@@ -126,7 +126,58 @@
       </div>
     </div>
   </div>
+  
 </div>
+
+
+<!-- Reviews Section -->
+<div class="details-section reviews-section">
+  <div class="reviews-header">
+    <h2>Reviews</h2>
+    <% if (listing.reviews && listing.reviews.length > 0) { %>
+      <div class="rating-summary">
+        <i class="fas fa-star"></i>
+        <% const avgRating = (listing.reviews.reduce((sum, review) => sum + review.rating, 0) / listing.reviews.length).toFixed(1) %>
+        <span><%= avgRating %></span>
+        <span class="bullet">•</span>
+        <span><%= listing.reviews.length %> reviews</span>
+      </div>
+    <% } %>
+  </div>
+
+  <% if(listing.reviews.length > 0) { %>
+    <div class="reviews-grid">
+      <% for(review of listing.reviews) { %>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-name">
+                <i class="fas fa-user-circle"></i>
+                <%= review.author.username %>
+              </div>
+              <div class="review-date">
+                <%= new Date(review.createdAt).toLocaleDateString("en-GB", {
+                  month: "short",
+                  year: "numeric"
+                }) %>
+              </div>
+            </div>
+            <div class="rating-display">
+              <% for(let i = 1; i <= 5; i++) { %>
+                <span class="star <%= i <= review.rating ? 'filled' : '' %>">★</span>
+              <% } %>
+            </div>
+          </div>
+          <p class="review-comment"><%= review.comment %></p>
+          
+        </div>
+      <% } %>
+    </div>
+  <% } else { %>
+    <p class="no-reviews">No reviews yet</p>
+  <% } %>
+</div>
+
 
 <!-- Booking Success Modal -->
 <div id="bookingModal" class="modal">
