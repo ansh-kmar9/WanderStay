@@ -184,10 +184,6 @@ module.exports.renderSuccessPaymentPage = async (req, res) => {
     req.flash("error", "Listing not found");
     return res.redirect("/listings");
   }
-  req.flash(
-    "success",
-    "Congratulations! Your room has been booked successfully."
-  );
   res.render("payments/success", {
     listing,
     amount,
@@ -203,10 +199,7 @@ module.exports.renderCancelPaymentPage = async (req, res) => {
     req.flash("error", "Listing not found");
     return res.redirect("/listings");
   }
-  req.flash(
-    "error",
-    "Booking was cancelled. Please try again or select another room."
-  );
+
   res.render("payments/cancel", { listing });
 };
 
